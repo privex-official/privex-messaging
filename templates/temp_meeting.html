@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Meeting</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        color: #333;
+        margin: 0;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .meeting-details {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 15px;
+      }
+      .container {
+        display: flex;
+        gap: 20px;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .sidebar {
+        width: 300px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        flex-shrink: 0;
+      }
+      .user-list-container {
+        margin-bottom: 20px;
+      }
+      .user-list {
+        max-height: 200px;
+        overflow-y: auto;
+        background: #f9f9f9;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      .user-card {
+        display: flex;
+        align-items: center;
+        padding: 5px;
+        border-bottom: 1px solid #ddd;
+        transition: background 0.3s;
+        cursor: pointer;
+      }
+      .user-card:hover {
+        background: #e9e9e9;
+      }
+      .user-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-weight: bold;
+      }
+      .user-name {
+        font-weight: bold;
+        color: #333;
+      }
+      .chat-container {
+        flex-grow: 1;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        min-width: 300px;
+      }
+      #chatBox {
+        flex-grow: 1;
+        overflow-y: scroll;
+        background: #ffffff;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      .message {
+        margin: 10px 0;
+        max-width: 70%;
+        clear: both;
+      }
+      .my-message {
+        text-align: right;
+        background-color: #dcf8c6;
+        padding: 10px 15px;
+        border-radius: 18px 18px 0 18px;
+        margin-left: auto;
+        color: #333;
+      }
+      .other-message {
+        text-align: left;
+        background-color: #f1f0f0;
+        padding: 10px 15px;
+        border-radius: 18px 18px 18px 0;
+        margin-right: auto;
+        border: 1px solid #ddd;
+      }
+      .message-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+      }
+      .message-sender {
+        font-weight: bold;
+      }
+      .message-time {
+        font-size: 12px;
+        color: #777;
+      }
+      .input-container {
+        display: flex;
+        margin-top: 15px;
+        position: relative;
+      }
+      #messageInput {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        margin-right: 10px;
+        transition: border-color 0.3s;
+        resize: none;
+        min-height: 45px;
+        max-height: 120px;
+      }
+      #messageInput:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-weight: 500;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .footer {
+        margin-top: 20px;
+        text-align: center;
+        color: #777;
+      }
+      .mention {
+        color: #007bff;
+        font-weight: bold;
+      }
+      .highlighted {
+        border-left: 4px solid #007bff;
+        padding-left: 6px;
+        background-color: #f0f8ff;
+      }
+      .system-message {
+        text-align: center;
+        background-color: #f0f0f0;
+        color: #555;
+        font-style: italic;
+        border-radius: 6px;
+        padding: 6px 12px;
+        margin: 8px auto;
+        max-width: 80%;
+        display: block;
+      }
+      .pinned-notice {
+        background: #fff7d1;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        border-left: 6px solid #f0c000;
+        font-weight: bold;
+        border-radius: 4px;
+        position: relative;
+      }
+      .pinned-notice button {
+        float: right;
+        background: transparent;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        color: #555;
+      }
+      .search-container {
+        margin-bottom: 15px;
+      }
+      .action-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding: 10px;
+        background: #f0f0f0;
+        border-radius: 6px;
+        justify-content: flex-end;
+      }
+      #mentionList {
+        list-style: none;
+        margin: 0;
+        padding: 5px;
+        position: absolute;
+        background: white;
+        border: 1px solid #ccc;
+        z-index: 1000;
+        max-height: 150px;
+        overflow-y: auto;
+        width: 200px;
+        border-radius: 4px;
+        display: none;
+      }
+      #mentionList li {
+        padding: 5px 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+      }
+      #mentionList li:hover {
+        background-color: #f9f9f9;
+      }
+      .block-controls {
+        margin-top: 5px;
+        color: #dc3545;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .block-controls:hover {
+        text-decoration: underline;
+      }
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+        }
+        .chat-container {
+          width: 100%;
+        }
+        #chatBox {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'base.html' %}
+
+    <div class="header">
+      <div>
+        <h1>{{meetingTitle}}</h1>
+        <p>{{meetingDescription}}</p>
+      </div>
+
+      <div class="d-flex flex-column align-items-end">
+        <h3>Welcome! {{session['username']}}</h3>
+        <div class="mt-2">
+          <a
+            href="/meeting/{{ meetingId }}/assign_todo"
+            class="btn btn-outline-primary me-2"
+          >
+            <i class="bi bi-journal-text"></i> Create TODO
+          </a>
+          <a
+            href="/meeting/{{ meetingId }}/show_todo"
+            class="btn btn-outline-secondary"
+          >
+            <i class="bi bi-list-check"></i> Show TODO
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="meeting-details">
+      <p>Meeting ID: {{meetingId}}</p>
+      <p>Host: {{host}}</p>
+      {% if host == session['username'] %}
+      <p>Passkey: {{passkey}}</p>
+      {% endif %}
+    </div>
+
+    <div class="container">
+      <div class="sidebar">
+        <h3>Active Members</h3>
+        <div class="user-list-container">
+          <div class="user-list" id="user-list">
+            <!-- Users will be added dynamically here -->
+          </div>
+        </div>
+        <h3>Blocked Members</h3>
+        <div class="user-list-container">
+          <div class="user-list" id="blocked-list">
+            <!-- Blocked users will be added dynamically here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-container">
+        <!-- 🔔 Notice Area for Pinned Message -->
+        <div id="pinnedNotice" class="pinned-notice" style="display: none">
+          📌 <span id="pinnedText"></span>
+          <button onclick="removePin()">❌</button>
+        </div>
+
+        <div class="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search messages..."
+            class="form-control"
+            style="
+              width: 100%;
+              padding: 8px;
+              border-radius: 5px;
+              border: 1px solid #ccc;
+            "
+          />
+        </div>
+
+        <div id="actionBar" class="action-bar" style="display: none">
+          <button onclick="handleEdit()" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-pencil"></i> Edit
+          </button>
+          <button
+            onclick="handleDelete()"
+            class="btn btn-sm btn-outline-danger"
+          >
+            <i class="bi bi-trash"></i> Delete
+          </button>
+          <button onclick="handlePin()" class="btn btn-sm btn-outline-warning">
+            <i class="bi bi-pin-angle"></i> Pin
+          </button>
+        </div>
+
+        <div id="chatBox">
+          {% for row in chat_history %}
+          <!-- DEBUG: {{ row }} -->
+          {% set user = row[0] %} {# adjust index as per your DB schema #} {%
+          set message = row[1] %} {% set timestamp = row[2] %} {% set display =
+          'You' if user == current_user else user %} {% set css_class =
+          'my-message' if user == current_user else 'other-message' %}
+          <div
+            class="message {{ css_class }} {{ extraClass }}"
+            data-user="{{ user.lower() }}"
+            data-text="{{ message.lower() }}"
+            onmousedown="startPress(this)"
+            onmouseup="cancelPress()"
+            ontouchstart="startPress(this)"
+            ontouchend="cancelPress()"
+          >
+            <div class="message-header">
+              <span class="message-sender">{{ display }}</span>
+              <span class="message-time">{{ timestamp }}</span>
+            </div>
+            <div class="message-content">{{ message }}</div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="input-container">
+          <textarea
+            id="messageInput"
+            placeholder="Type your message"
+            class="form-control"
+            style="
+              width: 100%;
+              padding: 10px 15px;
+              resize: none;
+              min-height: 45px;
+              max-height: 120px;
+            "
+          ></textarea>
+          <ul
+            id="mentionList"
+            style="
+              list-style: none;
+              margin: 0;
+              padding: 5px;
+              position: absolute;
+              background: white;
+              border: 1px solid #ccc;
+              z-index: 1000;
+              max-height: 150px;
+              overflow-y: auto;
+              width: 200px;
+              border-radius: 4px;
+              display: none;
+            "
+          ></ul>
+          <button onclick="sendMessage()" class="btn btn-primary">
+            <i class="bi bi-send"></i> Send
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2025 UEM CCoE. All rights reserved.</p>
+    </div>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const socket = io();
+      const room = "{{ meetingId }}";
+
+      // Connect to the socket
+      socket.on('connect', () => {
+          socket.emit('join', { room: room });
+      });
+
+      // Handle incoming messages
+      socket.on('message', (data) => {
+          const chatBox = document.getElementById('chatBox');
+          const currentUser = "{{ session['username'] }}";
+          const isCurrentUser = data.user === currentUser;
+          const messageClass = isCurrentUser ? 'my-message' : 'other-message';
+          const displayName = isCurrentUser ? 'You' : data.user;
+
+          // Mention and link parsing
+          let escapedText = data.text.replace(
+              /@(\w+)/g,
+              '<span class="mention">@$1</span>'
+          );
+          escapedText = escapedText.replace(
+              /(https?:\/\/[^\s]+)/g,
+              '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+          );
+
+          // Tag highlight
+          const isTagged = data.text.includes(`@${currentUser}`);
+          const extraClass = isTagged && !isCurrentUser ? 'highlighted' : '';
+
+          const now = new Date();
+          const hours = now.getHours().toString().padStart(2, '0');
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+          const day = now.getDate().toString().padStart(2, '0');
+          const month = (now.getMonth() + 1).toString().padStart(2, '0');
+          const timeStr = `${hours}:${minutes}`;
+          const dateStr = `${day}:${month}`;
+
+          const messageHTML = `
+          <div class="message ${messageClass} ${extraClass}"
+               data-user="${data.user.toLowerCase()}"
+               data-text="${data.text.toLowerCase()}"
+               onmousedown="startPress(this)"
+               onmouseup="cancelPress()"
+               ontouchstart="startPress(this)"
+               ontouchend="cancelPress()">
+              <div class="message-header">
+                  <span class="message-sender">${displayName}:</span>
+                  <span class="message-time">${timeStr} | ${dateStr}</span>
+              </div>
+              <div class="message-content">
+                  ${escapedText}
+              </div>
+          </div>
+          `;
+
+          chatBox.innerHTML += messageHTML;
+          chatBox.scrollTop = chatBox.scrollHeight;
+      });
+
+      // Handle system messages (like pinned messages)
+      socket.on('system_message', (data) => {
+          const chatBox = document.getElementById('chatBox');
+          if (data.type === 'pinned') {
+              document.getElementById("pinnedText").innerText = data.text;
+              document.getElementById("pinnedNotice").style.display = "block";
+              // Scroll to top to show the notice
+              document.getElementById("pinnedNotice").scrollIntoView({ behavior: "smooth" });
+          } else {
+              const messageHTML = `<div class="system-message">${data.text}</div>`;
+              chatBox.innerHTML += messageHTML;
+              chatBox.scrollTop = chatBox.scrollHeight;
+          }
+      });
+
+      // Send message function
+      function sendMessage() {
+          const input = document.getElementById('messageInput');
+          const msg = input.value.trim();
+          if (msg !== "") {
+              socket.emit('send_message', { room: room, message: msg });
+              input.value = "";
+          }
+      }
+
+      // Handle Enter key for sending messages
+      document.getElementById('messageInput').addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+          }
+      });
+
+      // Fetch and update user lists
+      function fetchUsers() {
+          fetch(`/get_users?room=${room}`)
+              .then(response => response.json())
+              .then(users => {
+                  const currentUser = "{{ session['username'] }}";
+                  // Check if current user is removed from user list (blocked)
+                  if (!users.includes(currentUser)) {
+                      window.location.href = "/access_denied";
+                      return; // stop processing
+                  }
+                  let userList = document.getElementById("user-list");
+                  userList.innerHTML = "";
+                  users.forEach(user => {
+                      let card = document.createElement("div");
+                      card.classList.add("user-card");
+
+                      // Avatar
+                      let avatar = document.createElement("div");
+                      avatar.classList.add("user-avatar");
+                      avatar.style.backgroundColor = "#007bff";
+                      avatar.textContent = user.charAt(0).toUpperCase();
+
+                      // Name
+                      let name = document.createElement("div");
+                      name.classList.add("user-name");
+                      name.textContent = user;
+
+                      // Block controls (only for host)
+                      if ("{{ session['username'] }}" === "{{ host }}") {
+                          let blockControls = document.createElement("div");
+                          blockControls.classList.add("block-controls");
+                          blockControls.innerHTML = '<i class="bi bi-shield-x"></i> Block';
+                          blockControls.onclick = (e) => {
+                              e.stopPropagation(); // Prevent triggering the user card click
+                              if (user === "{{ session['username'] }}") return; // Prevent self-blocking
+                              ifconfirm(`Do you want to block ${user}?`)) {
+                                  fetch('/block_unblock_user', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({
+                                          username: user,
+                                          meetingId: "{{ meetingId }}",
+                                          block: true
+                                      })
+                                  .then(res => res.json())
+                                  .then(data => {
+                                      if (data.success) {
+                                          fetchUsers();           // Refresh active users
+                                          fetchBlockedUsers();     // Refresh blocked users
+                                          alert(`${user} has been blocked.`);
+                                      } else {
+                                          alert("Something went wrong while blocking the user.");
+                                      }
+                                  })
+                                  .catch(error => {
+                                      console.error("Block request failed:", error);
+                                  });
+                              }
+                          };
+                          card.appendChild(blockControls);
+                      }
+
+                      card.appendChild(avatar);
+                      card.appendChild(name);
+                      userList.appendChild(card);
+                  });
+              })
+              .catch(error => console.error("Error fetching users:", error));
+      }
+
+      function fetchBlockedUsers() {
+          fetch(`/get_blocked_users?room=${room}`)
+              .then(response => response.json())
+              .then(users => {
+                  let blockedList = document.getElementById("blocked-list");
+                  blockedList.innerHTML = "";
+                  users.forEach(user => {
+                      let card = document.createElement("div");
+                      card.classList.add("user-card");
+
+                      // Avatar
+                      let avatar = document.createElement("div");
+                      avatar.classList.add("user-avatar");
+                      avatar.style.backgroundColor = "#dc3545"; // Red for blocked users
+                      avatar.textContent = user.charAt(0).toUpperCase();
+
+                      // Name
+                      let name = document.createElement("div");
+                      name.classList.add("user-name");
+                      name.textContent = user;
+
+                      // Unblock controls (only for host)
+                      if ("{{ session['username'] }}" === "{{ host }}") {
+                          let unblockControls = document.createElement("div");
+                          unblockControls.classList.add("block-controls");
+                          unblockControls.innerHTML = '<i class="bi bi-shield-check"></i> Unblock';
+                          unblockControls.onclick = (e) => {
+                              e.stopPropagation(); // Prevent triggering the user card click
+                              if (user === "{{ session['username'] }}") return; // Prevent self-unblocking
+                              if (confirm(`Do you want to unblock ${user}?`)) {
+                                  fetch('/block_unblock_user', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({
+                                          username: user,
+                                          meetingId: "{{ meetingId }}",
+                                          block: false  // This indicates unblock
+                                      })
+                                  .then(res => res.json())
+                                  .then(data => {
+                                      if (data.success) {
+                                          fetchUsers();           // Refresh active users
+                                          fetchBlockedUsers();     // Refresh blocked users
+                                          alert(`${user} has been unblocked.`);
+                                      } else {
+                                          alert("Something went wrong while unblocking the user.");
+                                      }
+                                  })
+                                  .catch(error => {
+                                      console.error("Unblock request failed:", error);
+                                  });
+                              }
+                          };
+                          card.appendChild(unblockControls);
+                      }
+
+                      card.appendChild(avatar);
+                      card.appendChild(name);
+                      blockedList.appendChild(card);
+                  });
+              })
+              .catch(error => console.error("Error fetching blocked users:", error));
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", function () {
+          fetchUsers();
+          fetchBlockedUsers();
+      });
+
+      // Search functionality
+      document.getElementById("searchInput").addEventListener("input", function () {
+          const query = this.value.toLowerCase();
+          const messages = document.querySelectorAll(".message");
+          messages.forEach(msg => {
+              const text = msg.getAttribute("data-text");
+              const user = msg.getAttribute("data-user");
+              if (text.includes(query) || user.includes(query)) {
+                  msg.style.display = "block";
+              } else {
+                  msg.style.display = "none";
+              }
+          });
+      });
+
+      // Mention functionality
+      const messageInput = document.getElementById("messageInput");
+      const mentionList = document.getElementById("mentionList");
+      let activeUsers = [];
+
+      // Fetch active users for tag suggestions
+      function loadActiveUsers() {
+          fetch(`/get_users?room={{ meetingId }}`)
+              .then(res => res.json())
+              .then(users => {
+                  activeUsers = users;
+              });
+      }
+
+      // Show mention suggestions
+      messageInput.addEventListener("input", function () {
+          const value = messageInput.value;
+          const cursorPos = messageInput.selectionStart;
+          const lastAt = value.lastIndexOf("@", cursorPos - 1);
+
+          if (lastAt === -1) {
+              mentionList.style.display = "none";
+              return;
+          }
+
+          const afterAt = value.slice(lastAt + 1, cursorPos).toLowerCase();
+          const matched = activeUsers.filter(user =>
+              user.toLowerCase().startsWith(afterAt)
+          );
+
+          if (matched.length === 0 || afterAt.includes(" ")) {
+              mentionList.style.display = "none";
+              return;
+          }
+
+          mentionList.innerHTML = "";
+          matched.forEach(user => {
+              const li = document.createElement("li");
+              li.textContent = user;
+              li.style.cursor = "pointer";
+              li.style.padding = "5px";
+              li.style.borderBottom = "1px solid #eee";
+
+              li.onclick = () => {
+                  const before = value.slice(0, lastAt);
+                  const after = value.slice(cursorPos);
+                  messageInput.value = `${before}@${user} ${after}`;
+                  messageInput.focus();
+                  mentionList.style.display = "none";
+              };
+
+              mentionList.appendChild(li);
+          });
+
+          const rect = messageInput.getBoundingClientRect();
+          mentionList.style.top = rect.bottom + window.scrollY + "px";
+          mentionList.style.left = rect.left + window.scrollX + "px";
+          mentionList.style.display = "block";
+      });
+
+      // Hide list when clicking outside
+      document.addEventListener("click", (e) => {
+          if (e.target !== messageInput) {
+              mentionList.style.display = "none";
+          }
+      });
+
+      document.addEventListener("DOMContentLoaded", loadActiveUsers);
+
+      // Message selection and action handling
+      let pressTimer = null;
+      let selectedMessage = null;
+
+      function startPress(el) {
+          cancelPress();
+          pressTimer = setTimeout(() => {
+              selectedMessage = el;
+              document.getElementById("actionBar").style.display = "flex";
+          }, 600); // long press threshold
+      }
+
+      function cancelPress() {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+      }
+
+      function handleDelete() {
+          if (!selectedMessage) return;
+
+          const content = selectedMessage.querySelector(".message-content").innerText;
+          const sender = selectedMessage.querySelector(".message-sender").innerText;
+
+          if (confirm(`Delete this message from ${sender}?\n\n${content}`)) {
+              // Here you'd call a DELETE endpoint with message ID (you'll add this in app.py)
+              selectedMessage.remove();
+              document.getElementById("actionBar").style.display = "none";
+          }
+      }
+
+      function handleEdit() {
+          if (!selectedMessage) return;
+
+          const content = selectedMessage.querySelector(".message-content").innerText;
+          const newText = prompt("Edit your message:", content);
+
+          if (newText !== null) {
+              selectedMessage.querySelector(".message-content").innerText = newText;
+              // Call edit API from backend here with message ID and newText
+              document.getElementById("actionBar").style.display = "none";
+          }
+      }
+
+      function handlePin() {
+          if (!selectedMessage) return;
+
+          const pinnedText = selectedMessage.querySelector(".message-sender").innerText + ": " +
+                            selectedMessage.querySelector(".message-content").innerText;
+
+          document.getElementById("pinnedText").innerText = pinnedText;
+          document.getElementById("pinnedNotice").style.display = "block";
+          // Scroll to top to show the notice
+          document.getElementById("pinnedNotice").scrollIntoView({ behavior: "smooth" });
+          document.getElementById("actionBar").style.display = "none";
+          // Optionally call Flask backend to persist pin status
+          // fetch('/pin_message', { method: 'POST', body: ... })
+      }
+
+      function removePin() {
+          document.getElementById("pinnedNotice").style.display = "none";
+          document.getElementById("pinnedText").innerText = "";
+      }
+
+      // Update user lists periodically
+      setInterval(() => {
+          fetchUsers();
+          fetchBlockedUsers();
+      }, 10000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<div class="scrollable-list">
+  <div class="row" id="meetingList">
+
+    {% if tuple_meetings %}
+      <div class="col-12 mb-3 position-relative">
+        <h5>#{{ meetingTitle }}</h5>
+        <p>Meeting ID: {{ meetingId }}</p>
+
+        {% if session["username"] == host %}
+          <p>Passkey: {{ passkey }}</p>
+          
+          <!-- Copy Info Button -->
+        <button class="btn btn-sm btn-outline-secondary ms-1"
+      onclick="copyMeetingInfo('{{ meetingId }}', '{{ passkey }}')">
+      copy
+    </button>
+        {% endif %}
+      </div>
+
+      {% for meeting in tuple_meetings %}
+        {% if meeting.2 != meetingId %}
+          <div class="col-12 mb-3">
+            <a
+              href="{{ url_for('join_meeting') }}?meeting={{ meeting.2 }}"
+              class="text-decoration-none text-dark"
+            >
+              <div class="card shadow-sm position-relative">
+                <div class="card-body">
+                  <h5 class="card-title text-primary text-capitalize">
+                    {{ meeting.0 }}
+                  </h5>
+                  <p class="card-text text-muted mb-2">
+                    <strong>Hosted by:</strong> {{ meeting.1 }}
+                  </p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">view</span>
+                    <i class="fas fa-arrow-right text-primary"></i>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+    {% else %}
+      <div class="col-12 text-center">
+        <p class="text-muted">Join or Host a meeting...</p>
+      </div>
+    {% endif %}
+
+  </div>
+</div>

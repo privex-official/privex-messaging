@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SQL Admin Console</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body { background:#111; color:#eee; font-family:Arial; padding:20px; }
+        select, textarea, button { padding:10px; margin:10px 0; width:100%; }
+        textarea { height:120px; background:#222; color:#0f0; }
+        table { width:100%; border-collapse:collapse; margin-top:20px; }
+        th, td { border:1px solid #444; padding:8px; }
+        th { background:#333; }
+        tr:nth-child(even) { background:#222; }
+    </style>
+
+    <script>
+        // Update tables when DB changes
+        function updateTables() {
+            let db = $("#database").val();
+
+            $.getJSON("/get_tables/" + db, function(data) {
+                let tableDropdown = $("#table");
+                tableDropdown.empty();
+                tableDropdown.append(`<option value="">Select Table</option>`);
+
+                data.forEach(tbl => {
+                    tableDropdown.append(`<option value="${tbl}">${tbl}</option>`);
+                });
+            });
+        }
+
+        // Auto-submit when selecting a table
+        $(document).ready(function() {
+            $("#table").on("change", function() {
+                $("form").submit();
+            });
+        });
+    </script>
+</head>
+
+<body>
+
+<h2>🔧 SQL Console (Admin Only)</h2>
+
+<form method="POST">
+
+    <label>Database:</label>
+    <select name="database" id="database" onchange="updateTables(); this.form.submit();">
+        {% for key, path in databases.items() %}
+            <option value="{{key}}" {% if key == selected_db %}selected{% endif %}>{{path}}</option>
+        {% endfor %}
+    </select>
+
+    <label>Table:</label>
+    <select name="table" id="table">
+        <option value="">Select Table</option>
+        {% for t in tables %}
+            <option value="{{t}}" {% if t == selected_table %}selected{% endif %}>{{t}}</option>
+        {% endfor %}
+    </select>
+
+    <label>Custom SQL Query:</label>
+    <textarea name="sql" placeholder="Example: SELECT * FROM User;"></textarea>
+
+    <button type="submit">Run SQL</button>
+</form>
+
+{% if headers %}
+<h3>📊 Output</h3>
+<table>
+    <tr>
+        {% for h in headers %}
+            <th>{{h}}</th>
+        {% endfor %}
+    </tr>
+
+    {% for row in rows %}
+    <tr>
+        {% for col in row %}
+            <td>{{col}}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+</body>
+</html>

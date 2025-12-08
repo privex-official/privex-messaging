@@ -1,0 +1,18 @@
+<div
+  class="card"
+  style="width: 22rem; margin: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)"
+>
+  <div class="card-body">
+    <h5 class="card-title">Subject: {{ subject }}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">
+      Assigned by: {{ assigned_by }}
+    </h6>
+    <p class="card-text">
+      {% if file_attachment %}
+      <a href="{{ file_attachment.url }}" class="card-link" download
+        >Download Attachment</a
+      >
+      {% else %} No file attached. {% endif %}
+    </p>
+  </div>
+</div>

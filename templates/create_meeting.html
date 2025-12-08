@@ -1,0 +1,92 @@
+{% extends 'base.html' %} {% block content %}
+<style>
+  .meeting-form-container {
+    max-width: 600px;
+    margin: 3rem auto;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    background: white;
+  }
+
+  .form-title {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+
+  .form-label {
+    color: #495057;
+    font-weight: 500;
+    font-size: 1.05rem;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    font-size: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #3498db;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+  }
+
+  .btn-submit:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+  }
+</style>
+
+<div class="meeting-form-container">
+  <h1 class="form-title">Create Meeting</h1>
+
+  <form method="POST">
+    <div class="mb-3">
+      <label for="meetingTitle" class="form-label">Title</label>
+      <input
+        type="text"
+        class="form-control"
+        id="meetingTitle"
+        name="title"
+        required
+        placeholder="Enter meeting title"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="meetingDescription" class="form-label">Description</label>
+      <textarea
+        class="form-control"
+        id="meetingDescription"
+        name="description"
+        rows="3"
+        required
+        placeholder="Enter meeting description"
+      ></textarea>
+    </div>
+    <button type="submit" class="btn-submit">Submit</button>
+  </form>
+</div>
+
+{% endblock %}

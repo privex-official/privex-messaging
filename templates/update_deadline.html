@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Deadline</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f5f7fa;
+      }
+
+      .form-container {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+      }
+
+      .datetime-input {
+        transition: all 0.3s ease;
+        border: 1px solid #e2e8f0;
+      }
+
+      .datetime-input:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+      }
+
+      .submit-btn {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .submit-btn:active {
+        transform: translateY(0);
+      }
+
+      .animation-enter {
+        animation: enterAnimation 0.6s ease-out forwards;
+      }
+
+      @keyframes enterAnimation {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-4">
+    <div class="form-container animation-enter w-full max-w-md p-8">
+      <form method="POST" class="space-y-6">
+        <div class="text-center mb-6">
+          <i class="fas fa-calendar-alt text-4xl text-indigo-500 mb-4"></i>
+          <h3 class="text-2xl font-bold text-gray-800">
+            Update Deadline for Task: {{ task.taskName }}
+          </h3>
+          <p class="text-gray-500 mt-2">Set a new deadline for this task</p>
+        </div>
+
+        <div class="space-y-2">
+          <label for="deadline" class="block text-sm font-medium text-gray-700">
+            <i class="far fa-clock mr-2 text-indigo-500"></i> New Deadline
+          </label>
+          <input
+            type="datetime-local"
+            id="deadline"
+            name="deadline"
+            required
+            class="datetime-input w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          />
+        </div>
+
+        <div class="flex justify-between items-center pt-4">
+          <a
+            href="#"
+            onclick="history.back()"
+            class="text-sm text-gray-500 hover:text-gray-700"
+          >
+            <i class="fas fa-arrow-left mr-1"></i> Go back
+          </a>
+          <button
+            type="submit"
+            class="submit-btn text-white font-medium py-3 px-6 rounded-lg"
+          >
+            <i class="fas fa-save mr-2"></i> Update Deadline
+          </button>
+        </div>
+      </form>
+    </div>
+    <script>
+      // Set minimum datetime to current datetime
+      document.addEventListener('DOMContentLoaded', function() {
+          const now = new Date();
+          const datetimeInput = document.getElementById('deadline');
+
+          // Format to datetime-local input format (YYYY-MM-DDTHH:mm)
+          const year = now.getFullYear();
+          const month = String(now.getMonth() + 1).padStart(2, '0');
+          const day = String(now.getDate()).padStart(2, '0');
+          const hours = String(now.getHours()).padStart(2, '0');
+          const minutes = String(now.getMinutes()).padStart(2, '0');
+
+          const minDateTime = ${year}-${month}-${day}T${hours}:${minutes};
+          datetimeInput.min = minDateTime;
+          datetimeInput.value = minDateTime;
+
+          // Add animation class to form on load
+          const formContainer = document.querySelector('.form-container');
+          formContainer.classList.add('animation-enter');
+      });
+    </script>
+  </body>
+</html>

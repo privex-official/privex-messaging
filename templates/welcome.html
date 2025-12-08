@@ -1,0 +1,658 @@
+{% extends 'base.html' %} {% block content %}
+
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    html{
+        scroll-behavior: smooth;
+    }
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        {# overflow-x: hidden; #}
+    }
+
+    .container {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+    #dashboard{
+        height: 100%;
+        width: 100%;
+        /* background-color: #F0F6FF; */
+        /* background-color: blue; */
+    }
+    #Home{
+        width: 100%;
+        height: 100vh;
+        background-image: url("{{ url_for('static', filename='images/img/Group1-updated.png') }}");
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    nav{
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        /* visibility: hidden;     remove this property upon rendering */
+    }
+    .logo-container{
+        position: relative;
+        top: 10px;
+        left: 10px;
+    }
+    .logo{
+        width: 180px;
+        height: 60px;
+        background-image: url("{{ url_for('static', filename='images/img/Slice_1-removebg-preview.png')}}");
+        background-size: cover;
+        background-position: center;
+    }
+    .nav-opt{
+        position: relative;
+        left: 30px;
+    }
+    .nav-opt li{
+        display: inline-block;
+        margin: 10px 20px;
+        list-style: none;
+        position: relative;
+        top: 15px;
+        /* right: 30px; */
+    }
+    .nav-opt li a{
+        text-decoration: none;
+        font-size: 1.56rem;
+        font-weight: bold;
+        font-family: "Arial", Times, serif;
+        cursor: pointer;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .border{
+        border:2px solid transparent;
+        border-radius: 30px;
+    }
+    .border:hover{
+        border: 2px solid #DDDDDD;
+        font-size: 1.25rem;
+        font-weight: normal;
+        color: #DDDDDD;
+    }
+    .font{
+        color:#ffffff;
+    }
+    .font:hover{
+        color:#DDDDDD;
+    }
+    .accounts{
+        display: flex;
+        position: relative;
+        left: 200px;
+        top: 15px;
+        gap: 50px;
+    }
+
+    .accounts li{
+        display: inline-block;
+        margin: 10px 20px;
+        list-style: none;
+    }
+    .accounts li a{
+        text-decoration: none;
+        font-size: 1.56rem;
+        font-weight: bold;
+        font-family: "Arial", Times, serif;
+        cursor: pointer;
+        text-align: center;
+        padding: 12px;
+    }
+    .accounts .login-li {
+        background-color: #2B519A;
+        border-radius: 30px;
+        border: 2px solid transparent;
+    }
+    .accounts .login{
+        color: #ffffff;
+        font-weight: bold;
+        padding: 15px;
+    }
+    .login-li-style:hover{
+        background-color: #F0F6FF;
+        border: 2px solid #2B519A;
+    }
+    .login-style:hover{
+        color: #2B519A;
+    }
+    .accounts .signup-li{
+        background-color: #ffffff;
+        border: 2px solid #2B519A;
+        border-radius: 30px;
+    }
+    .accounts .signup{
+        color: #2B519A;
+        font-weight: bold;
+        padding: 15px;
+    }
+    .signup-li-style:hover{
+        background-color: #2B519A;
+        border: 2px solid transparent;
+    }
+    .signup-style:hover{
+        color: #F0F6FF;
+    }
+    .accounts.mobile {
+    display: none;
+    }
+
+    /* -------------------hero section------------------ */
+
+    .hero{
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        height: 80vh;
+    }
+    .hero-msg{
+        flex-basis: 50%;
+        display: flex;
+        justify-content: center;  
+        align-items: center;      
+        flex-direction: column;
+        text-align: center;
+        /* position: relative;
+        bottom: 100px; */
+    }
+
+    .msg{
+            color: #FFFFFF;
+    }
+    #one{
+        font-size: 3.75rem;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+    #two{
+        font-size: 2.5rem;
+    }
+    #three{
+        font-size: 2.5rem;
+    }
+
+
+    .hero-img{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-basis: 50%;
+        width: 100%;
+        /* margin-top: 50px; */
+        position: relative;
+        bottom: 0px;
+        /* left: 30px; */
+    }
+    .img{
+        width: 70%;
+        height: 350px;
+        background-image: url("{{ url_for('static', filename='images/img/gmeet pic1.png')}}");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    .img-msg{
+        margin-top: 20px;
+        text-align: center;
+    }
+    #msg{
+        color: #2B519A;
+        font-size: 1.875rem;
+    }
+
+
+    .container2{
+        width: 100%;
+        height: 100%;
+        background-color: #F0F6FF;
+        /* background-color: blueviolet; */
+    }
+    .about-us-div{
+        padding: 50px 20px 40px 20px;
+    }
+    .about-us h1{
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 3.5rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        padding-left: 15px;
+    }
+    .about-msg p{
+        font-size: 1.25rem;
+        text-align: center;
+    }
+
+    /*features*/
+
+    .features{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        gap: 50px;
+    }
+
+    .box{
+        width: 350px;
+        height: 350px;
+        border-radius: 10px;
+        background-color: #DBE9FF;
+        padding: 100px 20px 20px 20px;
+        box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.5);
+    }
+    .box h3{
+        text-align: center;
+        font-size: 1.56rem;
+    }
+    .box p{
+        text-align: center;
+        font-size: 1.125rem;
+        padding: 5px;
+    }
+
+    /* -------------------------contact---------------------- */
+
+    .contact-container{
+        padding-top: 50px;
+    }
+    .contact-col{
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .contact-details{
+        flex-basis: 30%;
+        font-size: 1.25rem;
+        padding: 50px 20px 40px 20px;
+    }
+    .contact-details h1{
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 3.5rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        padding-left: 15px;
+    }
+
+
+    .contact-details p{
+        margin: 25px;
+    }
+
+    .contact-form{
+        flex-basis: 70%;
+        /* background-color: red; */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    /* .contact-form form{
+        width: 80%;
+    } */
+    .contact-card{
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        /* background-color: blue; */
+    }
+    .contact-card form{
+        width: 80%;
+    }
+    .btn.btn2{
+        display:inline-block;
+        background: #DBE9FF;
+    }
+    .btn.btn2:active {
+        transform: scale(0.95);
+        transition: transform 0.1s;
+    }
+    form input, form textarea{
+        width: 100%;
+        border: 0;
+        outline: none;
+        background: #FFFFFF;
+        padding:15px;
+        margin: 15px 0;
+        color: #262626;
+        font-size: 1.125rem;
+        border-radius: 6px;
+    }
+    form .btn2{
+        padding: 14px 50px;
+        font-size: 1.125rem;
+        margin-top: 20px;
+        cursor: pointer;
+        border-radius: 30px;
+    }
+    form .btn2:active {
+        transform: scale(0.95);
+        transition: transform 0.1s;
+    }
+    .footer{
+        width: 100%;
+        text-align: center;
+        padding: 15px 0;
+        background: #262626;
+        font-weight: 300;
+        margin-top: 10px;
+        color: #DDDDDD;
+    }
+
+    #msg2{
+        color: #61b752;
+        margin-top: -40px;
+        display: block;
+    }
+
+    /* --------------------Media queary-------------------- */
+
+    nav .fa-solid{
+        display:none;
+    }
+    nav .mobile-only{
+        display: none;
+    }
+
+
+    @media only screen and (max-width: 600px) {
+        #Home {
+            width: 100%;
+            height: 130vh;
+            background-image: url("images/phone-bg2.png");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .accounts {
+            display: none; /* hide original desktop accounts */
+        }
+
+        nav .fa-solid {
+            display: block;
+            font-size: 25px;
+            color: white;
+            z-index: 3;
+            margin-left: auto;
+            margin-right: 10px;
+        }
+
+        .nav-opt {
+            background-color: #2B519A;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 92vw;
+            height: 100vh;
+            padding-top: 50px;
+            z-index: 2;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            transform: translateX(92vw); /* hidden by default */
+            transition: transform 0.5s ease;
+            }
+            .nav-opt.active {
+            transform: translateX(0); /* show on toggle */
+        }
+
+
+
+        .nav-opt li {
+            display: block;
+            margin: 20px;
+            text-align: center;
+        }
+        /* .mobile li{
+            display: block;
+            margin: 20px;
+            text-align: center;
+        } */
+
+        .nav-opt .fa-xmark {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+        nav .fa-bars {
+            position: relative;
+            z-index: 1;        
+        }
+
+
+
+    /*------------hero section-------------*/
+        .logo{
+            width: 200px;
+            height: 80px;
+        }
+
+        .hero {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            height: auto;
+        }
+
+        .hero-msg,
+        .hero-img {
+            flex-basis: 100%;
+            padding: 10px;
+            margin-top: 50px;
+        }
+
+        .img {
+            width: 80%;
+            height: 250px;
+        }
+
+        #one {
+            font-size: 2.2rem;
+        }
+
+        #two,
+        #three {
+            font-size: 1.5rem;
+        }
+
+        #msg {
+            font-size: 1.25rem;
+        }
+        /*----------------------about------------------*/
+        .box{
+            height: 250px;
+            width: 250px;
+            padding-top: 40px;
+        }
+        .about-msg p{
+            font-size: 19px;
+        }
+        /*-----------------Contact Us & Footer---------------*/
+        .contact-details,.contact-form{
+            flex-basis: 100%;
+            width: 100%;
+        }
+        .contact-card {
+            width: 100%;
+        }
+        .footer{
+            font-size: 12px;
+        }
+    }
+</style>
+
+<div>
+     <div id="dashboard">
+        <div id="Home" class="container">
+           {# <nav>
+                <div class="logo-container">
+                    <div class="logo"></div>
+                </div>
+                <ul class="nav-opt" id="sidemenu">
+                    <li class="border"><a class="font" href="#Home">Home</a></li>
+                    <li class="border"><a class="font" href="#About">About</a></li>
+                    <li class="border"><a class="font" href="#Contact">Contact</a></li>
+                    <!-- <li>
+                        <ul class="accounts mobile">
+                                <li class="login-li login-li-style"><a class="login login-style" href="#">Login</a></li>
+                                <li class="signup-li signup-li-style"><a class="signup signup-style" href="#">Sign up for free</a></li>
+                        </ul>
+                    </li> -->
+                    <li class="login-li border mobile-only"><a class="login font" href="#">Login</a></li>
+                    <li class="signup-li border mobile-only"><a class="signup font" href="#">Sign up for free</a></li>
+                    <i class="fa-solid fa-xmark" onclick="closemenu()"></i>
+                </ul>
+                <i class="fa-solid fa-bars" onclick="openmenu()"></i>
+
+                <ul class="accounts">
+                    <li class="login-li login-li-style"><a class="login login-style" href="#">Login</a></li>
+                    <li class="signup-li signup-li-style"><a class="signup signup-style" href="#">Sign up for free</a></li>
+                </ul> 
+            </nav> #}
+            <div class="hero">
+                <div class="hero-msg">
+                    <p><span id="one" class="msg">Chat room </span></p>
+                    <p><span id="two" class="msg">Welcome to PRIVEX </span></p>
+                    <p><span id="three" class="msg">Your gossip is secure with us.</span></p>
+                </div>
+                <div class="hero-img">
+                    <div class="img"></div>
+                    <div class="img-msg">
+                        <p><span id="msg">Connect with friends anytime, anywhere.</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="About">
+            <div class="container2">
+                <div class="about-us-div">
+                    <div class="about-us">
+                        <h1>About Us</h1>
+                    </div>
+                    <div class="about-msg">
+                        <p>Share your thoughts seamlessly. Our chat app offers a fast, private, and secure way to connect in real-time. With simple passcode access, host control, automatic safety updates, and end-to-end encryption it ensures only the right people stay in the conversation.</p>
+                    </div>
+                </div>
+                <div class="features">
+                    <div class="feature1 box">
+                        <h3>Stays Safe on Its Own</h3>
+                        <p>Every time someone joins or leaves, privex quietly updates things in the background to keep your chat safe no extra effort needed.</p>
+                    </div>
+                    <div class="feature2 box">
+                        <h3>Once Kicked,They’re Out</h3>
+                        <p>If someone’s causing trouble and gets removed,they won’t be able to get back in, even if they have the passcode.</p>
+                    </div>
+                    <div class="feature3 box">
+                        <h3>Instant & Private Chats</h3>
+                        <p>Messages show up right away and stay between you and the people you’re chatting with no one else can see them.</p>
+                    </div>
+                    <div class="feature4 box">
+                        <h3>Assign & Track Tasks Easily</h3>
+                        <p>Need someone to do something? Just drop a task in the chat and assign it to anyone in the room like a shared to-do list everyone can see and stay on top of.</p>
+                    </div>
+                    <div class="feature5 box">
+                        <h3>Beginner-Friendly & Clean </h3>
+                        <p>Need someone to do something? Just drop a task in the chat and assign it to anyone in the room like a shared to-do list everyone can see and stay on top of.</p>
+                    </div>
+                    <div class="feature6 box">
+                        <h3>Messages You Can Trust</h3>
+                        <p>Every message in Privex comes with a unique stamp that proves who sent it so no one can deny what they said later.What’s sent is always real and reliable.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="Contact">
+            <div class="container2 contact-container">
+                <!-- <div class="contact-us"></div> -->
+                <div class="contact-col">
+                    <div class="contact-details">
+                        <h1>Contact Us</h1>
+                        <p><i class="fa-solid fa-envelope"></i> privex.official.contact@gmail.com</p>
+                    </div>
+                    <div class="contact-form">
+                        <div class="contact-card">
+                            <form name="submit-to-google-sheet">
+                                <input type="text" name="Name" placeholder="Name" required>
+                                <input type="email" name="Email" placeholder="Email address" required>
+                                <textarea name="Message" rows="6" placeholder="Leave a message..."></textarea>
+                                <button type="submit" class="btn btn2">Submit</button>
+                            </form>
+                            <span id="msg2"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>© 2025 Privex. Built with passion by Team XII. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+
+<!-- <script>
+    var sidemenu= document.getElementById("sidemenu");
+
+    function openmenu(){
+        sidemenu.style.right = "0";
+    }
+    function closemenu(){
+        sidemenu.style.right = "-225px";
+    }
+
+</script> -->
+
+
+<script>
+    function openmenu() {
+    document.getElementById("sidemenu").classList.add("active");
+    }
+
+    function closemenu() {
+    document.getElementById("sidemenu").classList.remove("active");
+    }
+</script>
+
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwDQ3R5vsPgU3a0BspmFAYaZ2IWW5-IzLY-owAHS-rLQ08e7w0Sm6npWXrdCA6ZPOXy/exec'
+
+    const form = document.forms['submit-to-google-sheet']
+
+    form.addEventListener('submit', e => {
+        e.preventDefault()
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+         .then(response => {
+                console.log('Success!', response)
+
+                form.reset()
+            })
+        .catch(error => console.error('Error!', error.message))
+    })
+</script>
+
+{% endblock %}

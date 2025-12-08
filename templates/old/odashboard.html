@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+.parent {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 8px;
+}
+.div1 {
+    grid-column: span 2 / span 2;
+    grid-row: span 5 / span 5;
+}
+.div2 {
+    grid-column: span 3 / span 3;
+    grid-row: span 5 / span 5;
+    grid-column-start: 3;
+}
+</style>
+
+<div class="parent">
+    <div class="div1">
+        <h3>{{ session.username }}</h3>
+        <a href="{{ url_for('meeting_create') }}">Host a Session</a><br>
+        <a href="{{ url_for('join_meeting') }}">Join a Session</a>
+    </div>
+
+    <div>
+        <h5>Total meetings: {{ totalCount }}</h5>
+        <h5>Hosted meetings: {{ hostCount }}</h5>
+        <h5>Join meetings: {{ joinCount }}</h5>
+    </div>
+
+    <div class="div2">
+        <h4>Your Meetings</h4>
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search meetings..."
+            style="width: 100%; padding: 8px; margin-bottom: 10px;"
+        />
+
+        <div id="meetingList">
+            {% for meeting in tuple_meetings %}
+            <div class="meeting-entry">
+                <a href="{{ url_for('join_meeting') }}?meeting={{ meeting.2 }}">
+                    <strong>{{ meeting.0 }}</strong><br>
+                    <small>host - {{ meeting.1 }}</small>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- ✅ WORKING JAVASCRIPT -->
+<script>
+    
+document.getElementById("searchInput").addEventListener("input", function () {
+    const q = this.value.trim();
+
+    fetch(`/search_meetings?q=${encodeURIComponent(q)}`)
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById("meetingList");
+            list.innerHTML = "";
+
+            if (data.length === 0) {
+                list.innerHTML = "<p>No meetings found.</p>";
+                return;
+            }
+
+            data.forEach(m => {
+                const div = document.createElement("div");
+                div.classList.add("meeting-entry");
+                div.innerHTML = `
+                    <a href="/join_meeting?meeting=${m.meetingId}">
+                        <strong>${m.title}</strong><br>
+                        <small>host - ${m.host}</small>
+                    </a>
+                `;
+                list.appendChild(div);
+            });
+        }).catch(error => {
+            console.error("Search failed:", error);
+        });
+});
+</script>
+{% endblock %}

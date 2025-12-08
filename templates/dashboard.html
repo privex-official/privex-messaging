@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Chat Room</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f4ff;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .parent {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+        gap: 15px;
+        height: 100vh;
+      }
+
+      .div3 {
+        grid-column: span 2 / span 2;
+        grid-row: 1;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .div4,
+      .div5,
+      .div6 {
+        background-color: #e7f1ff;
+        padding: 10px;
+        border-radius: 12px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .div4 {
+        grid-column: 3;
+        grid-row: 1;
+      }
+      .div5 {
+        grid-column: 4;
+        grid-row: 1;
+      }
+      .div6 {
+        grid-column: 5;
+        grid-row: 1;
+      }
+
+      .div9 {
+        grid-column: span 2 / span 2;
+        grid-row: span 5 / span 5; /* Match div10 */
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* Ensure full height of grid row span */
+      }
+
+      .div10 {
+        grid-column: span 3 / span 3;
+        grid-row: span 5 / span 5; /* Match div9 */
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        overflow-y: auto;
+        height: 100%; /* Same height as div9 */
+      }
+
+      .search-container {
+        padding: 0 5px 15px 5px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid #e0e8ff;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+      }
+
+      .stat-icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+        color: #007bff;
+      }
+
+      .stat-value {
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      /* Button Styles */
+      .action-btn {
+        display: inline-block;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .host-btn {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .host-btn:hover {
+        background-color: #0069d9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .join-btn {
+        background-color: #ffffff;
+        color: #007bff;
+        border: 2px solid #007bff;
+      }
+
+      .join-btn:hover {
+        background-color: #f0f7ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-icon {
+        font-size: 16px;
+      }
+
+      /* Chat Card Styles */
+      .chat-cards-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        overflow-y: auto;
+        flex-grow: 1;
+        padding-right: 5px;
+      }
+
+      .chat-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e0e8ff;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+
+      .chat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        border-color: #c3d5ff;
+      }
+
+      .chat-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .chat-card-title {
+        font-weight: 600;
+        font-size: 16px;
+        color: #007bff;
+        margin: 0;
+      }
+
+      .chat-card-host {
+        font-size: 13px;
+        color: #666;
+        font-style: italic;
+      }
+
+      .chat-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+        font-size: 12px;
+        color: #888;
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #007bff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 5px;
+      }
+
+      .section-title i {
+        font-size: 20px;
+      }
+
+      /* Custom scrollbar */
+      .chat-cards-container::-webkit-scrollbar {
+        display: None;
+      }
+
+      .chat-cards-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      .chat-cards-container::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
+      }
+
+      .chat-cards-container::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+
+      #div10::-webkit-scrollbar {
+        display: None;
+      }
+
+      #div10::-webkit-scrollbar-thumb {
+        background-color: #6366f1;
+        border-radius: 10px;
+      }
+      .div10-merged {
+        grid-column: 3 / span 3; /* occupies columns 4, 5, 6 */
+        grid-row: 1 / span 6; /* now spans the height of div3 + div9 */
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        overflow-y: auto;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'base.html' %}
+    <div class="parent">
+      <div class="div3">
+        <a
+          href="{{ url_for('meeting_create') }}"
+          class="btn btn-outline-primary p-2"
+        >
+          <i class="fas fa-comments btn-icon"></i>
+          Host a Chat
+        </a>
+        <a
+          href="{{ url_for('join_meeting') }}"
+          class="btn btn-outline-secondary p-2"
+        >
+          <i class="fas fa-comment-dots btn-icon"></i>
+          Join a Chat
+        </a>
+      </div>
+
+      <div class="div9">
+        <div class="section-title">
+          <i class="fas fa-comments"></i>
+          Your Chats
+        </div>
+        <div class="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by title or host..."
+          />
+        </div>
+        <div class="chat-cards-container" id="meetingList">
+          {% if tuple_meetings %} {% for meeting in tuple_meetings %}
+          <a
+            href="{{ url_for('join_meeting') }}?meeting={{ meeting.2 }}"
+            class="chat-card"
+          >
+            <div class="chat-card-header">
+              <h3 class="chat-card-title">{{ meeting.0 }}</h3>
+            </div>
+            <p class="chat-card-host">Hosted by: {{ meeting.1 }}</p>
+            <div class="chat-card-footer">
+              <span>Click to join</span>
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </a>
+          {% endfor %} {% else %}
+          <p class="text-center light" style="color: lightgray">
+            Join or Host a meeting...
+          </p>
+
+          {% endif %}
+        </div>
+      </div>
+      <div class="div10-merged">
+        <div
+          class="h-[75vh] overflow-y-auto pr-3 scrollbar-thin scrollbar-thumb-indigo-400 rounded-lg"
+        >
+          {% include 'dashboard_tasks.html' %}
+        </div>
+      </div>
+    </div>
+    <div class="footer text-center mt-3 py-3 border-top text-muted small">
+      <p class="mb-0">&copy; 2025 UEM CCoE. All rights reserved.</p>
+    </div>
+
+    <script>
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", function () {
+          const q = this.value.trim();
+
+          fetch(`/search_meetings?q=${encodeURIComponent(q)}`)
+            .then((res) => res.json())
+            .then((data) => {
+              const list = document.getElementById("meetingList");
+              list.innerHTML = "";
+
+              if (data.length === 0) {
+                list.innerHTML = `<p style="text-align:center;color:#666;padding:20px;">No matching chats found</p>`;
+                return;
+              }
+
+              data.forEach((m) => {
+                const card = document.createElement("a");
+                card.href = `/join_meeting?meeting=${m.meetingId}`;
+                card.classList.add("chat-card");
+                card.innerHTML = `
+                            <div class="chat-card-header">
+                                <h3 class="chat-card-title">${m.title}</h3>
+                            </div>
+                            <p class="chat-card-host">Hosted by: ${m.host}</p>
+                            <div class="chat-card-footer">
+                                <span>Click to join</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        `;
+                list.appendChild(card);
+              });
+            })
+            .catch((error) => {
+              console.error("Search failed:", error);
+            });
+        });
+    </script>
+  </body>
+</html>

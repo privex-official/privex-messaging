@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Assignment Portal</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --royal-blue: #1a237e;
+        --gold: #ffc107;
+        --light-gold: #ffecb3;
+        --white: #ffffff;
+        --soft-grey: #f5f5f7;
+        --dark-grey: #424242;
+      }
+
+      body {
+        font-family: "Manrope", sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+        color: var(--dark-grey);
+      }
+
+      .form-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      }
+
+      .form-container {
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        padding: 40px;
+        width: 100%;
+        max-width: 600px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .form-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: linear-gradient(
+          90deg,
+          var(--royal-blue) 0%,
+          var(--gold) 100%
+        );
+      }
+
+      .form-header {
+        margin-bottom: 32px;
+        text-align: center;
+        position: relative;
+      }
+
+      .form-header h2 {
+        color: var(--royal-blue);
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .form-header p {
+        color: #757575;
+        font-size: 15px;
+        margin: 0;
+      }
+
+      .form-header i {
+        color: var(--gold);
+        font-size: 48px;
+        margin-bottom: 16px;
+        display: inline-block;
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+        position: relative;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        color: var(--royal-blue);
+      }
+
+      input[type="text"],
+      input[type="datetime-local"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        background-color: var(--white);
+        font-family: "Manrope", sans-serif;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+      }
+
+      input[type="text"]:focus,
+      input[type="datetime-local"]:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--royal-blue);
+        box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+      }
+
+      input[type="text"][readonly] {
+        background-color: var(--soft-grey);
+        border-color: #e0e0e0;
+        color: #616161;
+      }
+
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        padding: 5px 0;
+      }
+
+      input[type="checkbox"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 5px;
+        margin-right: 12px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      input[type="checkbox"]:checked {
+        background-color: var(--gold);
+        border-color: var(--gold);
+      }
+
+      input[type="checkbox"]::after {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 12px;
+        color: var(--royal-blue);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+      }
+
+      input[type="checkbox"]:checked::after {
+        opacity: 1;
+      }
+
+      button {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(45deg, var(--royal-blue), #283593);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      button:hover {
+        background: linear-gradient(45deg, #283593, var(--royal-blue));
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+      }
+
+      button i {
+        font-size: 18px;
+      }
+
+      .floating-label {
+        position: absolute;
+        left: 18px;
+        top: -9px;
+        background: white;
+        padding: 0 8px;
+        font-size: 13px;
+        color: var(--royal-blue);
+        z-index: 1;
+      }
+
+      @media (max-width: 640px) {
+        .form-container {
+          padding: 30px 20px;
+        }
+
+        .form-header h2 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-wrapper">
+      <div class="form-container">
+        <div class="form-header">
+          <i class="fas fa-tasks"></i>
+          <h2>Task Assignment</h2>
+          <p>Create and assign new action items from your meeting</p>
+        </div>
+
+        <form method="POST">
+          <div class="form-group">
+            <span class="floating-label">Meeting ID</span>
+            <input
+              type="text"
+              id="meetingId"
+              name="meetingId"
+              value="{{ meeting_id }}"
+              readonly
+            />
+          </div>
+
+          <div class="form-group">
+            <span class="floating-label">Hosted By</span>
+            <input
+              type="text"
+              id="hostedBy"
+              name="hostedBy"
+              value="{{ hosted_by }}"
+              readonly
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="assignedTo">Assigned To</label>
+            <select id="assignedTo" name="assignedTo">
+              {% for user in users %}
+              <option value="{{ user }}">{{ user }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="deadline">Deadline</label>
+            <input
+              type="datetime-local"
+              id="deadline"
+              name="deadline"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="taskName">Task Name</label>
+            <input type="text" id="taskName" name="taskName" required />
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="uploadRequired" name="uploadRequired" />
+            <label for="uploadRequired">Attachment Required</label>
+          </div>
+
+          <div class="form-group">
+            <label for="comment">Comments</label>
+            <textarea
+              id="comment"
+              name="comment"
+              placeholder="Add any additional notes..."
+            ></textarea>
+          </div>
+
+          <button type="submit">
+            <i class="fas fa-paper-plane"></i>
+            Assign Task
+          </button>
+        </form>
+      </div>
+    </div>
+    <script>
+      const input = document.getElementById("deadline");
+      messageInput.addEventListener("change", () => {
+        const selected = new Date(input.value);
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        if (selected < now) {
+          alert("Please select a futuure date and time");
+        }
+      });
+    </script>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <script>
+          alert("{{ messages[0] }}");
+        </script>
+      {% endif %}
+    {% endwith %}
+
+  </body>
+</html>

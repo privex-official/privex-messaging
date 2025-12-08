@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Galaxy ✨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&family=Rubik+Doodle+Shadow&display=swap");
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e0e7ff 100%);
+        color: #1e293b;
+      }
+
+      .task-card {
+        background: white;
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 10px rgba(99, 102, 241, 0.1),
+          0 0 0 1px rgba(99, 102, 241, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .task-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15),
+          0 0 0 1px rgba(99, 102, 241, 0.1);
+      }
+
+      .task-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, #6366f1, #a855f7);
+      }
+
+      .task-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        margin-bottom: 12px;
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #4b5563;
+      }
+
+      .meta-icon {
+        color: #6366f1;
+        font-size: 14px;
+      }
+
+      .status-pill {
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .failed {
+        background: linear-gradient(135deg, #ffe4e6, #fee2e2);
+        color: #f43f5e;
+        border-left: 3px solid #f43f5e;
+      }
+
+      .submitted {
+        background: linear-gradient(135deg, #dcfce7, #d1fae5);
+        color: #10b981;
+        border-left: 3px solid #10b981;
+      }
+
+      .pending {
+        background: linear-gradient(135deg, #fff3e0, #fff0e1);
+        color: #f59e0b;
+        border-left: 3px solid #f59e0b;
+      }
+
+      .upload-form {
+        margin-top: 12px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .file-input-wrapper {
+        flex-grow: 1;
+        position: relative;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #f1f5f9;
+      }
+
+      .file-input-wrapper:hover {
+        background: #e2e8f0;
+      }
+
+      .file-input {
+        width: 100%;
+        padding: 8px 12px;
+        padding-right: 40px;
+        border: none;
+        background: transparent;
+        font-size: 13px;
+      }
+
+      .file-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6366f1;
+      }
+
+      .submit-btn {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        transition: all 0.3s;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+      }
+
+      .task-name {
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .task-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+
+      /* New styles for filter buttons */
+      .filter-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 2px solid transparent;
+        color: #4b5563;
+        background: #f1f5f9;
+        transition: all 0.3s;
+      }
+
+      .filter-button:hover {
+        background: #e2e8f0;
+        border-color: #6366f1;
+        color: #6366f1;
+      }
+
+      .filter-button.active {
+        background: #6366f1;
+        color: white;
+        border-color: #6366f1;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body class="p-6">
+    <div class="max-w-2xl mx-auto">
+      <p
+        class="text-center text-indigo-400 mb-8 text-sm flex justify-center items-center gap-2"
+      >
+        <i class="fas fa-rocket"></i> Your intergalactic task manager
+        <i class="fas fa-star"></i>
+      </p>
+      <div class="space-y-4 overflow-y-auto pr-2" style="flex-grow: 1">
+        <div class="space-y-4">
+          <div style="margin-bottom: 10px">
+            <div class="flex gap-4 mt-2">
+              <a
+                href="?status=all{% if selected_meeting %}&meeting={{ selected_meeting }}{% endif %}"
+              >
+                <button
+                  class="filter-button {% if selected_status == 'all' %}active{% endif %}"
+                >
+                  <i class="fas fa-list"></i> All
+                </button>
+              </a>
+              <a
+                href="?status=completed{% if selected_meeting %}&meeting={{ selected_meeting }}{% endif %}"
+              >
+                <button
+                  class="filter-button {% if selected_status == 'completed' %}active{% endif %}"
+                >
+                  <i class="fas fa-check-circle"></i> Completed
+                </button>
+              </a>
+              <a
+                href="?status=pending{% if selected_meeting %}&meeting={{ selected_meeting }}{% endif %}"
+              >
+                <button
+                  class="filter-button {% if selected_status == 'pending' %}active{% endif %}"
+                >
+                  <i class="fas fa-clock"></i> Pending
+                </button>
+              </a>
+            </div>
+          </div>
+
+          <!-- Tasks Assigned To Me -->
+          {% if assigned_by_me %}
+          <h3 class="text-lg font-semibold text-indigo-600 mb-2">
+            Tasks Assigned By You
+          </h3>
+          {% endif %} {% for task in assigned_by_me %}
+
+          <a href="{{ url_for('view_task', task_id=task[0]) }}">
+            <div class="task-card">
+              <div class="task-name">
+                <span class="task-icon">
+                  <i class="fas fa-tasks"></i>
+                </span>
+                {{ task[4] }}
+              </div>
+              <div class="task-meta">
+                <div class="meta-item">
+                  <i class="fas fa-user-tie meta-icon"></i>
+                  <span>Assigned To:</span>
+                  <strong>{{ task[3] }}</strong>
+                </div>
+                <div class="meta-item">
+                  <i class="far fa-clock meta-icon"></i>
+                  <span>Due:</span>
+                  <strong>{{ task[7].strftime('%#d %B %Y %#I:%M %p') }}</strong>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          {% endfor %}
+
+          <!-- Tasks You Assigned -->
+          {% if assigned_to_me %}
+
+          <h3 class="text-lg font-semibold text-purple-600 mt-6 mb-2">
+            Tasks Assigned to You
+          </h3>
+          {% endif %} {% for task in assigned_to_me %}
+          <a href="{{ url_for('view_task', task_id=task[0]) }}">
+            <div
+              class="task-card {% if task[7] and task[7] < now %}bg-light text-muted opacity-75{% endif %}"
+              style="
+                border: 1px solid #ccc;
+                padding: 15px;
+                margin-bottom: 10px;
+                border-radius: 8px;
+              "
+            >
+              <div
+                class="task-name d-flex justify-content-between align-items-center"
+              >
+                <div>
+                  <span class="task-icon"><i class="fas fa-tasks"></i></span>
+                  {{ task[4] }} {% if task[8] %}
+                  <span class="text-success ms-2" title="Completed"
+                    ><i class="fas fa-check-circle"></i
+                  ></span>
+                  {% endif %}
+                </div>
+
+                {% if task[8] %}
+                <form
+                  action="{{ url_for('delete_todo', task_id=task[0]) }}"
+                  method="POST"
+                  class="d-inline"
+                >
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-danger"
+                    title="Delete Task"
+                  >
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </form>
+                {% endif %}
+              </div>
+
+              <div class="task-meta mt-2">
+                <div class="meta-item">
+                  <i class="fas fa-user-tie meta-icon"></i>
+                  <span>Assigned by:</span> <strong>{{ task[2] }}</strong>
+                </div>
+                <div class="meta-item">
+                  <i class="far fa-clock meta-icon"></i>
+                  <span>Due:</span>
+                  <strong>{{ task[7].strftime('%#d %B %Y %#I:%M %p') }}</strong>
+                </div>
+              </div>
+
+              {% if not task[8] %}
+              <form
+                action="{{ url_for('mark_task_done', task_id=task[0]) }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="mt-3"
+              >
+                {% if task[5] %}
+                <div class="meta-item mb-2">
+                  <label for="file">Attach file (required):</label>
+                  <input type="file" name="file" class="form-control" />
+                </div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">
+                  Mark as Complete
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </a>
+
+          {% endfor %} {% if not (assigned_to_me and assigned_by_me) %}
+          <p>No Task Available</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

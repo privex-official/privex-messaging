@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Meeting</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        
+        <style>
+          
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f7fa;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        color: #333;
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .header button {
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .header button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .meeting-details {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 20px;
+        background: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .sidebar {
+        width: 25%;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+    }
+
+    .user-list {
+        max-height: 150px;
+        overflow-y: auto;
+        background: #f9f9f9;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-card {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        transition: background 0.3s;
+    }
+
+    .user-card:hover {
+        background: #e9ecef;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    .user-name {
+        font-weight: bold;
+        color: #333;
+    }
+
+
+    .my-message {
+        text-align: right;
+        margin: 5px 0;
+        background-color: #dcf8c6;
+        padding: 10px;
+        border-radius: 10px;
+        display: inline-block;
+        max-width: 70%;
+        float: right;
+        clear: both;
+    }
+
+    .other-message {
+        text-align: left;
+        margin: 5px 0;
+        background-color: #ffffff;
+        padding: 10px;
+        border-radius: 10px;
+        display: inline-block;
+        max-width: 70%;
+        float: left;
+        clear: both;
+        border: 1px solid #ddd;
+    }
+
+    .input-container {
+        display: flex;
+        margin-top: 10px;
+    }
+
+    #messageInput {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-right: 10px;
+        transition: border-color 0.3s;
+    }
+
+    #messageInput:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .footer {
+        margin-top: 20px;
+        text-align: center;
+        color: #777;
+    }
+
+   .mention {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.mention-self {
+    color: #dc3545; /* Red for current user mentions */
+    font-weight: bold;
+}
+
+.mention-highlight {
+    border-left: 4px solid #dc3545;
+    padding-left: 10px;
+    background-color: #fff0f0;
+}
+
+
+    .highlighted {
+        border-left: 4px solid #007bff;
+        padding-left: 6px;
+        background-color: #f0f8ff;
+    }
+
+    .system-message {
+        text-align: center;
+        background-color: #f0f0f0;
+        color: #555;
+        font-style: italic;
+        border-radius: 6px;
+        padding: 6px 12px;
+        margin: 8px auto;
+        max-width: 80%;
+        display: block;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    a:visited {
+        color: inherit;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #chatBox {
+            width: 100%;
+        }
+    }
+    .my-message {
+    text-align: right;
+    margin: 5px 0;
+    background-color: #dcf8c6; /* green */
+    padding: 10px;
+    border-radius: 10px;
+    display: inline-block;
+    max-width: 70%;
+    float: right;
+    clear: both;
+}
+
+.other-message {
+    text-align: left;
+    margin: 5px 0;
+    background-color: #e8f0fe; /* blue shade */
+    padding: 10px;
+    border-radius: 10px;
+    display: inline-block;
+    max-width: 70%;
+    float: left;
+    clear: both;
+    border: 1px solid #ddd;
+}
+
+/* Red border for mentions */
+.mention-highlight {
+    border-left: 4px solid red;
+    padding-left: 10px;
+    background-color: #fff0f0;
+}
+
+/* For @username mentions */
+.mention {
+    color: red;
+    font-weight: bold;
+}
+
+</style>
+<style>
+.card-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.card:hover {
+    transform: scale(1.02);
+    transition: 0.2s ease-in-out;
+}
+.scrollable-list {
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 0; /* Optional: space for hidden scrollbar */
+}
+
+/* Hide scrollbar for all browsers */
+.scrollable-list::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* Chrome/Safari/Webkit */
+}
+.scrollable-list {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+#chatBox {
+    height: 400px;
+    width: 60%;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+
+
+</style>
+
+
+
+    </head>
+    <body>
+        {% include 'base.html' %}
+        
+        <div class="row">
+    <div class="col-3 ps-2" style="height: 520px;">
+        {% include 'meeting_grps.html' %}
+    </div>
+    <div class="col-9" style="height: 450px">
+        <div class="header">
+    <div style="width: 100%;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            
+             <input type="text" id="searchInput" placeholder="Search messages..."
+                   style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+        </div>
+
+        
+        <div class="d-flex align-items-center gap-2 mt-1">
+            <!-- Actions Dropdown -->
+            <div class="dropdown">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    Actions
+                </a>
+
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <li>
+                        <a class="dropdown-item" data-bs-toggle="offcanvas" href="#offcanvasExample"
+                           role="button" aria-controls="offcanvasExample">
+                            Members
+                        </a>
+                    </li>
+                    <li><a class="dropdown-item" href="/meeting/{{ meetingId }}/assign_todo">Create New TODO</a></li>
+                    <li><a class="dropdown-item" href="/meeting/{{ meetingId }}/show_todo">Show TODO</a></li>
+                    {% if session['username'] == host %}
+                    <li><button class="dropdown-item" onclick="showConfirmationToast('delete')">Delete Room</button></li>
+                    {% endif %}
+                    {% if session['username'] == host %}
+                    <li><button class="dropdown-item" onclick="showConfirmationToast('leave host')">Leave Room</button></li>
+                    {% else %}
+                    <li><button class="dropdown-item" onclick="showConfirmationToast('leave')">Leave Room</button></li>
+                    {% endif %}
+                    {% if session['username'] == host %}
+                    <li><button class="dropdown-item" onclick="showCohostToast()">Assign Co-host</button></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Info Button -->
+            
+        </div>
+
+        <!-- Search Input (100% width of parent div) -->
+        <div class="container">
+            <!-- SIDEBAR -->
+            
+
+
+            <!-- CHAT PANEL -->
+             <!-- 🔍 SEARCH -->
+
+
+            <div class="chat-panel" style="flex-grow: 1; display: flex; flex-direction: column; height: 400px;">
+                
+                <div id="chatBox" style="width: 100%; margin-block: 20px; flex: 1; overflow-y: auto;">
+
+                    <div style="width: 100%;">
+    
+
+                           
+                   
+            
+        </div>
+
+                    {% for row in chat_history %}
+                        {% set user = row['username'] %}
+                        {% set message = row['message'] %}
+                        {% for member in members %}
+                            {% if member == session['username'] %}
+                                {% set processed_message = processed_message | replace('@' ~ member, '<span class="mention-self">@' ~ member ~ '</span>') %}
+                            {% else %}
+                                {% set processed_message = processed_message | replace('@' ~ member, '<span class="mention">@' ~ member ~ '</span>') %}
+                            {% endif %}
+                            {% endfor %}
+
+                        {% set timestamp = row['time'] ~ " | " ~ row['date'] %}
+                        {% set display = 'You' if user == session['username'] else user %}
+                        {% set css_class = 'my-message' if user == session['username'] else 'other-message' %}
+                        {% set is_mention = '@' ~ session['username'] in message %}
+                        {% set chatid = row['message'] ~ row['time'] ~ row['date'] %}
+                        <div class="chat-message {{ css_class }} {% if is_mention and user != session['username'] %}mention-highlight{% endif %}"
+                            data-user="{{ user|lower | e }}"
+
+                            data-text="{{ message|lower | e }}"
+
+                            data-id="{{ chatid|urlencode }}"
+                            onmousedown="startPress(this)"
+                            onmouseup="cancelPress()"
+                            ontouchstart="startPress(this)"
+                            ontouchend="cancelPress()">
+                            <strong>{{ display }}:</strong>
+                            {{ message|replace('@' ~ session['username'], '<span class="mention">@' ~ session['username'] ~ '</span>') | safe }}
+                            <br>
+                            <small class="message-timestamp">{{ timestamp }}</small>
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="Type your message">
+                    <button onclick="sendMessage()">Send</button>
+                    <ul id="mentionList" style="position:absolute; display:none; background:white; border:1px solid #ccc; list-style:none; padding:0; margin:0; z-index:10000;"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        
+    </div>
+</div>
+
+
+            
+ 
+
+        
+            
+        
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+            <div id="actionToast" class="toast hide text-white" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex align-items-center justify-content-between px-3 py-2">
+                    <div id="toastMsg">Are you sure?</div>
+                    <div>
+                        <button type="button" class="btn btn-light btn-sm me-1" id="confirmAction">Yes</button>
+                        <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="toast">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
+  <div id="systemToast" class="toast text-white bg-primary hide" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex align-items-center justify-content-between px-3 py-2">
+      <div id="systemToastMsg">System message</div>
+      <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Members</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="sidebar" 
+                style="width: 300px"
+                {% if session['username'] == host %}
+                title="click to block/unblock a member"
+                {% endif %}>
+                
+                <h3>Active Members</h3>
+                <div class="user-list" id="user-list"></div>
+                
+                <h3>Blocked Members</h3>
+                <div class="user-list" id="blocked-list"></div>
+            </div>
+  </div>
+</div>
+<div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999; ">
+    <div id="assignCohostToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
+        <div class="toast-header bg-primary text-white">
+            <strong class="me-auto">Assign Co-host</strong>
+            <button type="button" class="btn-close btn-close-white ms-2 mb-1" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            <form method="post" action="/meeting/{{ meetingId }}/set_cohost">
+                <label for="cohostSelect" class="form-label">Select user:</label>
+                <select name="cohost" id="cohostSelect" class="form-select mb-2" required>
+                    <option value="{{ co_host }}" selected>{{ co_host if co_host else "Select user" }}</option>
+                    {% for user in members %}
+                        {% if user != session['username'] and user != co_host %}
+                            <option value="{{ user }}">{{ user }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success w-100">Assign</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+        <div class="footer">
+            <p>&copy; 2025 UEM CCoE. All rights reserved.</p>
+        </div>
+        <script>
+function showMeetingDetails() {
+    const host = "{{ host }}";
+    const meetingId = "{{ meetingId }}";
+    alert(`Meeting Details:\n\nHost: ${host}\nMeeting ID: ${meetingId}`);
+}
+</script>
+
+        <script>
+    function showCohostToast() {
+    const toastElement = document.getElementById('assignCohostToast');
+    const toast = new bootstrap.Toast(toastElement, {
+        autohide: false  // stays until closed
+    });
+    toast.show();
+}
+
+</script>
+
+
+        <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+        <script>
+    const toastEl = document.getElementById('actionToast');
+    const toastMsg = document.getElementById('toastMsg');
+    const confirmBtn = document.getElementById('confirmAction');
+    const toast = new bootstrap.Toast(toastEl);
+
+    let currentAction = '';
+    let meetingId = "{{ meetingId }}";
+function showToast(message) {
+    const toastEl = document.getElementById('systemToast');
+    const toastMsg = document.getElementById('systemToastMsg');
+
+    toastMsg.textContent = message;
+    const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+    toast.show();
+}
+
+    function showConfirmationToast(action) {
+        currentAction = action;
+
+        // Set message and color
+        if (action === 'delete') {
+            toastEl.classList.remove('bg-warning');
+            toastEl.classList.add('bg-danger');
+            toastMsg.textContent = 'Are you sure to delete the room?';
+        } else if (action === 'leave') {
+            toastEl.classList.remove('bg-danger');
+            toastEl.classList.add('bg-secondary');
+            toastMsg.textContent = 'Are you sure to leave the room? ';
+        }
+        else if (action === 'leave host' ) {
+            toastEl.classList.remove('bg-danger');
+            toastEl.classList.add('bg-secondary');
+            toastMsg.textContent = 'Are you sure to leave the room? Make sure cohost exists else meeting will be deleted';
+        }
+
+        toast.show();
+    }
+
+    confirmBtn.addEventListener('click', function () {
+        if (currentAction === 'delete') {
+            window.location.href = `/meeting/${meetingId}/delete_room`;
+        } else if (currentAction === 'leave') {
+            window.location.href = `/meeting/${meetingId}/leave_room`;
+        }
+    });
+</script>
+<script>
+  function copyMeetingInfo(meetingId, passkey) {
+  const text = `http://127.0.0.1:5000/join_meeting/${encodeURIComponent(meetingId)}/${encodeURIComponent(passkey)}`;
+  navigator.clipboard.writeText(text)
+    .then(() => alert("Meeting ID and Passkey copied!"))
+    .catch(() => alert("Failed to copy!"));
+}
+
+</script>
+
+        <script>
+            const socket = io();
+            const room = "{{ meetingId }}";
+
+            socket.on('connect', () => {
+                socket.emit('join', { room: room });
+            });
+
+           socket.on('message', (data) => {
+    const chatBox = document.getElementById('chatBox');
+
+    const currentUser = "{{ session['username'] }}";
+    const isCurrentUser = data.user === currentUser;
+    const displayName = isCurrentUser ? "You" : data.user;
+    const messageClass = isCurrentUser ? 'my-message' : 'other-message';
+     if (data.user === "System") {
+        showToast(data.text);  // Show toast with the system message
+
+    }
+
+    let escapedText = data.text.replace(
+  /@(\w+)/g,                     // match every @word
+  (_match, p1) => `<span class="mention">@${p1}</span>`
+);
+
+    const isTagged = data.text.includes(`@${currentUser}`) && !isCurrentUser;
+    const extraClass = isTagged ? 'mention-highlight' : '';
+
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dateStr = now.toLocaleDateString([], { day: '2-digit', month: '2-digit' });
+
+    const messageHTML = `
+    <div class="chat-message ${messageClass} ${extraClass}"
+         data-user="${data.user.toLowerCase()}"
+         data-text="${data.text.toLowerCase()}">
+        <strong>${displayName}:</strong> ${escapedText}<br>
+        <small class="message-timestamp">${timeStr} | ${dateStr}</small>
+    </div>
+    `;
+
+    chatBox.innerHTML += messageHTML;
+    chatBox.scrollTop = chatBox.scrollHeight;
+    
+});
+
+
+
+
+            function sendMessage() {
+                const input = document.getElementById('messageInput');
+                const msg = input.value;
+                if (msg.trim() !== "") {
+                    socket.emit('send_message', { room: room, message: msg });
+                    input.value = "";
+                }
+            }
+
+            document.getElementById('messageInput').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            function fetchUsers() {
+    fetch(`/get_users?room=${room}`)
+        .then(response => response.json())
+        .then(users => {
+            const currentUser = "{{ session['username'] }}";
+
+            // 🚫 Check if current user is removed from user list (blocked)
+            if (!users.includes(currentUser)) {
+                window.location.href = "/access_denined";
+                return; // stop processing
+            }
+
+            let userList = document.getElementById("user-list");
+            userList.innerHTML = "";
+
+            users.forEach(user => {
+                let card = document.createElement("div");
+                card.classList.add("user-card");
+
+                let avatar = document.createElement("div");
+                avatar.classList.add("user-avatar");
+                avatar.textContent = user.charAt(0).toUpperCase();
+
+                let name = document.createElement("div");
+                name.classList.add("user-name");
+                name.textContent = user;
+
+                card.appendChild(avatar);
+                card.appendChild(name);
+                userList.appendChild(card);
+            });
+        })
+        .catch(error => console.error("Error fetching users:", error));
+}
+
+
+            function fetchBlockedUsers() {
+                fetch(`/get_blocked_users?room=${room}`)
+                    .then(response => response.json())
+                    .then(users => {
+                        let blockedList = document.getElementById("blocked-list");
+                        blockedList.innerHTML = "";
+
+                        users.forEach(user => {
+                            let card = document.createElement("div");
+                            card.classList.add("user-card");
+
+                            let avatar = document.createElement("div");
+                            avatar.classList.add("user-avatar");
+                            avatar.textContent = user.charAt(0).toUpperCase();
+
+                            let name = document.createElement("div");
+                            name.classList.add("user-name");
+                            name.textContent = user;
+
+                            card.appendChild(avatar);
+                            card.appendChild(name);
+
+                            blockedList.appendChild(card);
+                        });
+                    })
+                    .catch(error => console.error("Error fetching blocked users:", error));
+            }
+
+            
+            document.addEventListener("DOMContentLoaded", function () {
+    fetchUsers();
+    fetchBlockedUsers();
+    const chatBox = document.getElementById("chatBox");
+    chatBox.scrollTop = chatBox.scrollHeight;
+});
+
+            document.getElementById("searchInput").addEventListener("input", function () {
+                const query = this.value.toLowerCase();
+                const messages = document.querySelectorAll(".chat-message");
+
+                messages.forEach(msg => {
+                    const text = msg.getAttribute("data-text");
+                    const user = msg.getAttribute("data-user");
+
+                    if (text.includes(query) || user.includes(query)) {
+                        msg.style.display = "block";
+                    } else {
+                        msg.style.display = "none";
+                    }
+                });
+            });
+
+        </script>
+        <script>
+
+        const messageInput = document.getElementById("messageInput");
+        const mentionList = document.getElementById("mentionList");
+        let activeUsers = [];
+
+    function loadActiveUsers() {
+    fetch(`/get_users?room={{ meetingId }}`)
+        .then(res => res.json())
+        .then(users => {
+            activeUsers = users.filter(u => u !== "{{ session['username'] }}"); // exclude self
+        });
+}
+
+    messageInput.addEventListener("input", function () {
+    const value = messageInput.value;
+    const cursorPos = messageInput.selectionStart;
+
+    const lastAt = value.lastIndexOf("@", cursorPos - 1);
+
+    if (lastAt === -1 || (lastAt > 0 && /\S/.test(value[lastAt - 1]))) {
+        mentionList.style.display = "none";
+        return;
+    }
+
+    const afterAt = value.slice(lastAt + 1, cursorPos).toLowerCase();
+    if (afterAt.includes(" ")) {
+        mentionList.style.display = "none";
+        return;
+    }
+
+    const matched = activeUsers.filter(user =>
+        user.toLowerCase().startsWith(afterAt)
+    );
+
+    if (matched.length === 0) {
+        mentionList.style.display = "none";
+        return;
+    }
+
+    mentionList.innerHTML = "";
+    matched.forEach(user => {
+        const li = document.createElement("li");
+        li.textContent = user;
+        li.style.cursor = "pointer";
+        li.style.padding = "5px 10px";
+        li.style.borderBottom = "1px solid #eee";
+
+        li.onclick = () => {
+            const before = value.slice(0, lastAt);
+            const after = value.slice(cursorPos);
+            messageInput.value = `${before}@${user} ${after}`;
+            messageInput.focus();
+            mentionList.style.display = "none";
+        };
+
+        mentionList.appendChild(li);
+    });
+
+    const rect = messageInput.getBoundingClientRect();
+    mentionList.style.top = `${rect.bottom + window.scrollY}px`;
+    mentionList.style.left = `${rect.left + window.scrollX}px`;
+    mentionList.style.display = "block";
+});
+
+    // Hide list when clicking outside
+    document.addEventListener("click", (e) => {
+    if (e.target !== messageInput && e.target.parentElement !== mentionList) {
+        mentionList.style.display = "none";
+    }
+});
+
+    document.addEventListener("DOMContentLoaded", loadActiveUsers);
+
+
+
+
+
+
+    
+</script>
+
+<script>
+let pressTimer = null;
+let selectedMessage = null;
+
+function startPress(el) {
+  cancelPress();
+  pressTimer = setTimeout(() => {
+    selectedMessage = el;
+    document.getElementById("actionBar").style.display = "block";
+  }, 600); // long press threshold
+}
+
+function cancelPress() {
+  clearTimeout(pressTimer);
+  pressTimer = null;
+}
+
+
+
+
+
+
+
+setInterval(() => {
+    fetchUsers();
+    fetchBlockedUsers();
+}, 10000);
+
+</script>
+{% if session['username']== host %}
+<script>
+    
+document.getElementById("user-list").addEventListener("click", function (e) {
+    const card = e.target.closest(".user-card");
+    if (!card) return;
+
+    const username = card.querySelector(".user-name").textContent;
+
+    if (username === "{{ session['username'] }}") return; // Prevent self-blocking
+
+    if (confirm(`Do you want to block ${username}?`)) {
+        fetch('/block_unblock_user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: username,
+                meetingId: "{{ meetingId }}",
+                block: true
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // ✅ Refresh both lists after blocking
+                fetchUsers();         
+                fetchBlockedUsers();  
+
+                alert(`${username} has been blocked.`);
+            } else {
+                alert("Something went wrong while blocking the user.");
+            }
+        })
+        .catch(error => {
+            console.error("Block request failed:", error);
+        });
+    }
+});
+</script>
+<script>
+document.getElementById("blocked-list").addEventListener("click", function (e) {
+    const card = e.target.closest(".user-card");
+    if (!card) return;
+
+    const username = card.querySelector(".user-name").textContent;
+
+    if (username === "{{ session['username'] }}") return; // Prevent self-unblocking
+
+    if (confirm(`Do you want to unblock ${username}?`)) {
+        fetch('/block_unblock_user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: username,
+                meetingId: "{{ meetingId }}",
+                block: false  // 👈 this indicates unblock
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                fetchUsers();           // ✅ Refresh
+                fetchBlockedUsers();    // ✅ Refresh
+                alert(`${username} has been unblocked.`);
+            } else {
+                alert("Something went wrong while unblocking the user.");
+            }
+        })
+        .catch(error => {
+            console.error("Unblock request failed:", error);
+        });
+    }
+});
+</script>
+{% endif %}
+
+
+    </body>
+</html>

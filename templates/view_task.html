@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Task Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="p-8 bg-gradient-to-br from-indigo-100 to-purple-100 font-sans">
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-4">
+      <h2 class="text-2xl font-bold text-indigo-700">{{ task.name }}</h2>
+      <p><strong>Chat Name:</strong> {{ roomname }}</p>
+      <p><strong>Chat ID:</strong> {{ task.meetingId }}</p>
+      <p><strong>Assigned To:</strong> {{ task.assignedTo }}</p>
+      <p><strong>Assigned By:</strong> {{ task.hostedBy }}</p>
+      <p><strong>Deadline:</strong> {{ task.deadline }}</p>
+
+      <div>
+        <strong>Comment:</strong>
+        <div class="mt-1 p-3 bg-gray-100 rounded-md text-sm text-gray-700">
+          {{ task.comment | linkify if task.comment else "No comments provided."
+          }}
+        </div>
+      </div>
+
+      <p>
+        <strong>Status:</strong>
+        {% if task.isDone %}
+        <span class="text-green-600 font-semibold">Completed</span>
+        {% else %}
+        <span class="text-yellow-600 font-semibold">Pending</span>
+        {% endif %}
+      </p>
+
+      <a href="{{ url_for('dashboard') }}">
+        <button
+          class="mt-4 px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600"
+        >
+          Back to Dashboard
+        </button>
+      </a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TODOs for Meeting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f5f7fa;
+      }
+
+      .todo-card {
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border-left: 4px solid;
+      }
+
+      .todo-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .pending {
+        border-left-color: #ff9800;
+      }
+
+      .completed {
+        border-left-color: #4caf50;
+      }
+
+      .status-badge {
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .pending-badge {
+        background-color: #fff3e0;
+        color: #ff9800;
+      }
+
+      .completed-badge {
+        background-color: #e8f5e9;
+        color: #4caf50;
+      }
+
+      .delete-btn {
+        transition: all 0.2s ease;
+      }
+
+      .delete-btn:hover {
+        transform: scale(1.1);
+        color: #f44336;
+      }
+
+      .update-btn {
+        transition: all 0.2s ease;
+      }
+
+      .update-btn:hover {
+        transform: scale(1.1);
+        color: #2196f3;
+      }
+
+      .animate-in {
+        animation: fadeIn 0.5s ease forwards;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .priority-high {
+        border-left-color: #f44336;
+      }
+
+      .priority-medium {
+        border-left-color: #ff9800;
+      }
+
+      .priority-low {
+        border-left-color: #2196f3;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+      <div class="text-center mb-12">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">
+          TODOs for Meeting: {{ meeting_name }}
+        </h1>
+        <p class="text-gray-600">Track and manage your action items</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for todo in todo_tasks %}
+        <div
+          class="todo-card rounded-lg shadow-md overflow-hidden animate-in"
+          {%
+          if
+          todo.isDone
+          %}class="completed"
+          {%
+          else
+          %}class="pending"
+          {%
+          endif
+          %}
+        >
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+              <h3 class="text-xl font-semibold text-gray-800">
+                {{ todo.taskName }}
+              </h3>
+              <span
+                class="status-badge {% if todo.isDone %}completed-badge{% else %}pending-badge{% endif %}"
+              >
+                {% if todo.isDone %}
+                <i class="fas fa-check-circle mr-1"></i> Completed {% else %}
+                <i class="fas fa-clock mr-1"></i> Pending {% endif %}
+              </span>
+            </div>
+
+            <div class="space-y-3 text-gray-600">
+              <div class="flex items-center">
+                <i class="fas fa-user-edit mr-2 text-blue-500"></i>
+                <span
+                  >Created by:
+                  <span class="font-medium">{{ todo.assigned_by }}</span></span
+                >
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-user-tag mr-2 text-purple-500"></i>
+                <span
+                  >Assigned to:
+                  <span class="font-medium">{{ todo.assigned_to }}</span></span
+                >
+              </div>
+
+              <div class="flex items-center">
+                <i class="far fa-calendar-alt mr-2 text-red-500"></i>
+                <span
+                  >Due:
+                  <span class="font-medium">{{ todo.deadline }}</span></span
+                >
+              </div>
+
+              <div class="flex items-center">
+                <i class="fas fa-info-circle text-blue-500"></i>
+                <span class="ms-1"
+                  >Comments:
+                  {% if todo.comment %}
+                  <span class="font-medium">{{ todo.comment | truncate(50) }} ...</span></span>
+                  {% else %}
+                    <span class="font-medium"> No comment available </span></span>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if session['username'] == todo.assigned_by %}
+            <div class="flex justify-end space-x-3 mt-6">
+              <form method="POST" action="/delete_todo/{{ todo.id }}">
+                <button
+                  type="submit"
+                  class="delete-btn text-gray-500 hover:text-red-500"
+                >
+                  <i class="fas fa-trash-alt fa-lg"></i>
+                </button>
+              </form>
+              <form method="GET" action="/update_deadline/{{ todo.id }}">
+                <button
+                  type="submit"
+                  class="update-btn text-gray-500 hover:text-blue-500"
+                >
+                  <i class="far fa-edit fa-lg"></i>
+                </button>
+              </form>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <script>
+      // Add some interactive effects
+      document.addEventListener("DOMContentLoaded", function () {
+        const cards = document.querySelectorAll(".todo-card");
+
+        cards.forEach((card) => {
+          card.addEventListener("mouseenter", function () {
+            this.style.boxShadow = "0 15px 30px rgba(0,0,0,0.12)";
+          });
+
+          card.addEventListener("mouseleave", function () {
+            this.style.boxShadow = "0 5px 15px rgba(0,0,0,0.08)";
+          });
+        });
+
+        // Simulate priority colors (you can replace with actual priority from your data)
+        const priorityClasses = [
+          "priority-high",
+          "priority-medium",
+          "priority-low",
+        ];
+        cards.forEach((card, index) => {
+          card.classList.add(priorityClasses[index % 3]);
+        });
+      });
+    </script>
+  </body>
+</html>

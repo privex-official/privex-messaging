@@ -1,0 +1,209 @@
+{% extends 'base.html' %} {% block content %}
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+/>
+
+<style>
+  .login-container {
+    max-width: 450px;
+    margin: 5rem auto;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    background: white;
+  }
+  .login-title {
+    text-align: center;
+    color: #3a3a3a;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+  .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #525252;
+    font-weight: 500;
+  }
+  .form-control {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: border 0.3s ease;
+    box-sizing: border-box;
+  }
+  .form-control:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  }
+  .btn-login {
+    width: 100%;
+    padding: 0.9rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #4a90e2;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 0.5rem;
+  }
+  .btn-login:hover {
+    background-color: #3a7bc8;
+  }
+  .alternate-action {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #666;
+  }
+  .alternate-action a {
+    color: #4a90e2;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .alternate-action a:hover {
+    text-decoration: underline;
+  }
+  .input-icon {
+    position: relative;
+  }
+
+  .input-icon input {
+    padding-left: 40px;
+    padding-right: 40px; /* Add space for eye icon on the right */
+  }
+
+  .input-icon i.fas {
+    position: absolute;
+    top: 42px;
+    left: 15px;
+    color: #999;
+  }
+
+  .toggle-password {
+    position: absolute;
+    top: 42px;
+    right: 15px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: #888;
+    z-index: 2;
+    background: white;
+    padding: 0 5px;
+  }
+</style>
+
+<div class="login-container">
+  <h1 class="login-title">
+    <i class="fas fa-user-circle" style="margin-right: 10px"></i>Login
+  </h1>
+
+  <form method="post">
+    <div class="form-group input-icon">
+      <label for="id_username">Username</label>
+      <i class="fas fa-user mt-2"></i>
+      <input
+        type="text"
+        class="form-control"
+        id="id_username"
+        name="username"
+        required
+        placeholder="Enter your username"
+      />
+    </div>
+
+    <div class="form-group input-icon">
+      <label for="id_password">Password</label>
+      <i class="fas fa-lock mt-2 ms-1"></i>
+      <input
+        type="password"
+        class="form-control"
+        id="id_password"
+        name="password"
+        required
+        placeholder="Enter your password"
+      />
+      <i
+        class="bi bi-eye toggle-password"
+        onclick="togglePassword('id_password', this)"
+      ></i>
+    </div>
+
+    <button type="submit" class="btn-login">
+      <i class="fas fa-sign-in-alt" style="margin-right: 8px"></i> Login
+    </button>
+  </form>
+
+    <div class="alternate-action">
+      <p><a href="{{ url_for('forgot_password') }}">Forgot password?</a></p>
+    </div>
+
+  <div class="alternate-action">
+    <p>
+      Don't have an account? <a href="{{url_for('signup')}}">Sign up here</a>
+    </p>
+  </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Add form validation
+    const form = document.querySelector("form");
+    const inputs = form.querySelectorAll("input[required]");
+
+    form.addEventListener("submit", function (e) {
+      let isValid = true;
+
+      inputs.forEach((input) => {
+        if (!input.value.trim()) {
+          input.style.borderColor = "#ff6b6b";
+          isValid = false;
+        } else {
+          input.style.borderColor = "#ddd";
+        }
+      });
+
+      if (!isValid) {
+        e.preventDefault();
+        alert("Please fill in all required fields.");
+      }
+    });
+
+    // Add input focus effects
+    inputs.forEach((input) => {
+      input.addEventListener("focus", function () {
+        this.parentNode.querySelector("i").style.color = "#4a90e2";
+      });
+
+      input.addEventListener("blur", function () {
+        this.parentNode.querySelector("i").style.color = "#999";
+      });
+    });
+  });
+</script>
+<script>
+  function togglePassword(inputId, icon) {
+    const input = document.getElementById(inputId);
+    const isPassword = input.type === "password";
+    input.type = isPassword ? "text" : "password";
+    icon.classList.toggle("bi-eye");
+    icon.classList.toggle("bi-eye-slash");
+  }
+</script>
+
+{% endblock %}
